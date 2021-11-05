@@ -1,5 +1,4 @@
 import re
-
 from bs4 import BeautifulSoup
 import requests
 
@@ -13,11 +12,11 @@ def get_book_info(url: str) -> dict:
     book_data = doc.find(name='table').find_all('tr')
 
     # TODO : image_url
-    # TODO : price regex
 
     number_available = book_data[5].find('td').text
     number_available = re.search(
-        r'(?P<nbr>\d+)', number_available
+        r'(?P<nbr>\d+)',
+        number_available
     ).group('nbr')
 
     previous_div = doc.find(name='div', id='product_description')
@@ -26,17 +25,32 @@ def get_book_info(url: str) -> dict:
     par = doc.find(name='p', class_='star-rating')
     classes = par.get('class')
     review_rating = classes[-1]
-    
+
+    price_including_tax = re.search(
+        r'(?P<price>\d+.\d+)',
+        book_data[3].find('td').text
+    ).group('price')
+    price_excluding_tax = re.search(
+        r'(?P<price>\d+.\d+)',
+        book_data[2].find('td').text
+    ).group('price')
+
+    image_url = doc.find('img').get('src')
+    # removing relative path
+    image_url = '/'.join(elem for elem in image_url.split('/') if elem != '..')
+    image_url = BASEURL + image_url
+
     book_info = {
         "product_page_url": url,
         "universal_product_code": book_data[0].find('td').text,
         "title": doc.h1.text,
-        "price_including_tax": book_data[3].find('td').text,
-        "price_excluding_tax": book_data[2].find('td').text,
+        "price_including_tax": price_including_tax,
+        "price_excluding_tax": price_excluding_tax,
         "number_available": number_available,
         "product_description": product_description,
         "category": book_data[1].find('td').text,
         "review_rating": review_rating,
+        "image_url": image_url,
     }
 
     print(par.get('class')[-1])
