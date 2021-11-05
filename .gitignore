@@ -1,2 +1,7 @@
 .vscode/*
 *.json
+*.csv
+__pycache__
+*.pyc
+*.html
+
