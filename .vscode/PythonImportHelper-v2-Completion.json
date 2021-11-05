@@ -1,0 +1,46 @@
+[
+    {
+        "label": "re",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "re",
+        "description": "re",
+        "detail": "re",
+        "documentation": {}
+    },
+    {
+        "label": "BeautifulSoup",
+        "importPath": "bs4",
+        "description": "bs4",
+        "isExtraImport": true,
+        "detail": "bs4",
+        "documentation": {}
+    },
+    {
+        "label": "requests",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "requests",
+        "description": "requests",
+        "detail": "requests",
+        "documentation": {}
+    },
+    {
+        "label": "get_book_info",
+        "kind": 2,
+        "importPath": "web_scraping",
+        "description": "web_scraping",
+        "peekOfCode": "def get_book_info(url: str) -> dict:\n    book_page = requests.get(url).text\n    doc = BeautifulSoup(book_page, 'lxml')\n    book_data = doc.find(name='table').find_all('tr')\n    # TODO : image_url\n    # TODO : price regex\n    number_available = book_data[5].find('td').text\n    number_available = re.search(\n        r'(?P<nbr>\\d+)', number_available\n    ).group('nbr')",
+        "detail": "web_scraping",
+        "documentation": {}
+    },
+    {
+        "label": "BASEURL",
+        "kind": 5,
+        "importPath": "web_scraping",
+        "description": "web_scraping",
+        "peekOfCode": "BASEURL = \"http://books.toscrape.com/\"\ndef get_book_info(url: str) -> dict:\n    book_page = requests.get(url).text\n    doc = BeautifulSoup(book_page, 'lxml')\n    book_data = doc.find(name='table').find_all('tr')\n    # TODO : image_url\n    # TODO : price regex\n    number_available = book_data[5].find('td').text\n    number_available = re.search(\n        r'(?P<nbr>\\d+)', number_available",
+        "detail": "web_scraping",
+        "documentation": {}
+    }
+]
