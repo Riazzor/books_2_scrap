@@ -13,8 +13,6 @@ def get_book_info(url: str) -> dict:
 
     book_data = soup.find(name='table').find_all('tr')
 
-    # TODO : image_url
-
     number_available = book_data[5].find('td').text
     number_available = re.search(
         r'(?P<nbr>\d+)',
@@ -64,6 +62,3 @@ if __name__ == "__main__":
     url = BASEURL + "catalogue/old-records-never-die-one-mans-quest-for-his-vinyl-and-his-past_39/index.html"
     book_info = get_book_info(url)
     print(*[f"{k}: {v}" for k, v in book_info.items()], sep="\n")
-
-
-# TODO : AREPL VS Jupyter

@@ -15,7 +15,6 @@ def get_category_books(url: str):
     category_books = []
     for book in book_list:
         book_url = book.find('a')['href']
-        # print(book_url)
         # removing relative path and rebuilding absolute url
         book_url = '/'.join(
             elem for elem in book_url.split('/') if elem != '..'
@@ -25,11 +24,17 @@ def get_category_books(url: str):
         book_info = get_book_info(book_url)
         category_books.append(book_info)
 
+    next_page = soup.find('li', class_='next')
+    if next_page:
+        next_page_url = next_page.find('a')['href']
+        trunc_url = url[:url.rfind('/')] + '/'
+        next_page_url = trunc_url + next_page_url
+        for book in get_category_books(next_page_url):
+            category_books.append(book)
+
     return category_books
-# TODO : recursive function for fetching next book if multiple page
 
 
 if __name__ == '__main__':
     url = 'http://books.toscrape.com/catalogue/category/books/sequential-art_5/index.html'
     print(len(get_category_books(url)))
-    # print(*get_category_books(url), sep='\n\n')

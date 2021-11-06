@@ -35,5 +35,4 @@ if __name__ == "__main__":
     book_info = get_book_info(
         'http://books.toscrape.com/catalogue/the-requiem-red_995/index.html'
     )
-    # print(book_info)
     save_book_to_csv_file(book_info)
