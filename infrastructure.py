@@ -9,7 +9,6 @@ def save_book_to_csv_file(book_info: dict, category: str = 'uncategorized') -> N
     if not os.path.exists("./Data"):
         os.makedirs("./Data/image")
 
-    
     csv_columns = book_info.keys()
     csv_file = f"Data/{category}.csv"
 

@@ -1,12 +1,16 @@
+"""
+Parsing all book info in page and
+returning them as a dict.
+"""
+
 import re
 from bs4 import BeautifulSoup
-import requests
 
-BASEURL = "http://books.toscrape.com/"
+from client import get_web_page, BASEURL
 
 
 def get_book_info(url: str) -> dict:
-    book_page = requests.get(url).text
+    book_page = get_web_page(url)
 
     doc = BeautifulSoup(book_page, 'lxml')
     book_data = doc.find(name='table').find_all('tr')
@@ -37,7 +41,9 @@ def get_book_info(url: str) -> dict:
 
     image_url = doc.find('img').get('src')
     # removing relative path
-    image_url = '/'.join(elem for elem in image_url.split('/') if elem != '..')
+    image_url = '/'.join(
+        elem for elem in image_url.split('/') if elem != '..'
+    )
     image_url = BASEURL + image_url
 
     book_info = {
@@ -53,7 +59,6 @@ def get_book_info(url: str) -> dict:
         "image_url": image_url,
     }
 
-    print(par.get('class')[-1])
     return book_info
 
 
