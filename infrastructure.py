@@ -4,8 +4,14 @@ import os
 
 def save_book_to_csv_file(book_info: dict, category: str = 'uncategorized') -> None:
     """One csv file per category with each book in it."""
+
+    # on first use, create Data/image
+    if not os.path.exists("./Data"):
+        os.makedirs("./Data/image")
+
+    
     csv_columns = book_info.keys()
-    csv_file = f"data/{category}.csv"
+    csv_file = f"Data/{category}.csv"
 
     # If file doesn't exist, we need to write the header first :
     if os.path.exists(csv_file) and os.path.getsize(csv_file) != 0:
