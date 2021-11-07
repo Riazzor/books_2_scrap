@@ -2,8 +2,8 @@
 Iterating all book in a category page and saving them.
 """
 
-from client import get_web_page, BASEURL
-from book_page import get_book_info
+from web_scraping.client import get_web_page, BASEURL
+from web_scraping.book_page import get_book_info
 
 # @pagination
 

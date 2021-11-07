@@ -5,7 +5,7 @@ returning them as a dict.
 
 import re
 
-from client import get_web_page, BASEURL
+from web_scraping.client import get_web_page, BASEURL
 
 
 def get_book_info(url: str) -> dict:
@@ -20,7 +20,10 @@ def get_book_info(url: str) -> dict:
     ).group('nbr')
 
     previous_div = soup.find(name='div', id='product_description')
-    product_description = previous_div.find_next_sibling('p').text
+    if previous_div:
+        product_description = previous_div.find_next_sibling('p').text
+    else:
+        product_description = 'No description available ...'
 
     par = soup.find(name='p', class_='star-rating')
     classes = par.get('class')

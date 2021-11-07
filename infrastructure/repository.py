@@ -1,8 +1,10 @@
 import csv
 import os
 
+from web_scraping.book_page import get_book_info
 
-def save_book_to_csv_file(book_info: dict, category: str = 'uncategorized') -> None:
+
+def save_book(book_info: dict, category: str = 'uncategorized') -> None:
     """One csv file per category with each book in it."""
 
     # on first use, create Data/image
@@ -31,8 +33,7 @@ def save_book_to_csv_file(book_info: dict, category: str = 'uncategorized') -> N
 
 
 if __name__ == "__main__":
-    from book_page import get_book_info
-    book_info = get_book_info(
+    book_info = get_book_info()(
         'http://books.toscrape.com/catalogue/the-requiem-red_995/index.html'
     )
-    save_book_to_csv_file(book_info)
+    save_book(book_info)
