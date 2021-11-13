@@ -15,25 +15,24 @@ def save_book(book_info: dict, category: str = 'uncategorized') -> None:
     csv_file = f"Data/{category}.csv"
 
     # If file doesn't exist, we need to write the header first :
-    if os.path.exists(csv_file) and os.path.getsize(csv_file) != 0:
-        with open(csv_file, 'a') as csv_file:
+    if not os.path.exists(csv_file):
+        with open(csv_file, 'w') as file:
             writer = csv.DictWriter(
-                csv_file,
-                fieldnames=csv_columns
-            )
-            writer.writerow(book_info)
-    else:
-        with open(csv_file, 'w') as csv_file:
-            writer = csv.DictWriter(
-                csv_file,
+                file,
                 fieldnames=csv_columns
             )
             writer.writeheader()
-            writer.writerow(book_info)
+
+    with open(csv_file, 'a') as file:
+        writer = csv.DictWriter(
+            file,
+            fieldnames=csv_columns
+        )
+        writer.writerow(book_info)
 
 
 if __name__ == "__main__":
-    book_info = get_book_info()(
+    book_info = get_book_info(
         'http://books.toscrape.com/catalogue/the-requiem-red_995/index.html'
     )
     save_book(book_info)
