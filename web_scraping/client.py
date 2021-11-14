@@ -10,3 +10,11 @@ def get_web_page(url: str) -> BeautifulSoup:
     soup = BeautifulSoup(web_page, 'lxml')
 
     return soup
+
+
+def get_book_cover(image_url):
+    image = request('GET', image_url)
+    content = False
+    if image.ok:
+        content = image.content
+    return content

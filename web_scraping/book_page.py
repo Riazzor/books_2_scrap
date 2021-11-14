@@ -35,9 +35,9 @@ def get_book_info(url: str) -> dict:
         'Four': 4,
         'Five': 5,
     }
-    par = soup.find(name='p', class_='star-rating')
-    classes = par.get('class')
-    review_rating = rating[classes[-1]]
+    pararagraphe = soup.find(name='p', class_='star-rating')
+    classes = pararagraphe.get('class')
+    review_rating = rating.get(classes[-1], 'Not available')
 
     # Both price with and without taxe
     price_including_tax = re.search(
