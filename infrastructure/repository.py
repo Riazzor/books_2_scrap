@@ -25,14 +25,14 @@ def save_book(book_info: dict, category: str = 'uncategorized') -> None:
     csv_file = f"Data/book/{category}.csv"
 
     if not os.path.exists(csv_file):
-        with open(csv_file, 'w') as file:
+        with open(csv_file, 'w', encoding='utf-8') as file:
             writer = csv.DictWriter(
                 file,
                 fieldnames=csv_columns
             )
             writer.writeheader()
 
-    with open(csv_file, 'a') as file:
+    with open(csv_file, 'a', encoding='utf-8') as file:
         writer = csv.DictWriter(
             file,
             fieldnames=csv_columns

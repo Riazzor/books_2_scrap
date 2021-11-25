@@ -33,15 +33,15 @@ Project/
 ├── requirements.txt
 ├── README.md
 ├── main.py
-├── web_scraping
+├── web_scraping/
 │ ├── __init__.py
 │ ├── client.py
 │ ├── category_page.py
 │ └── book_page.py
-├── infrastructure
+├── infrastructure/
 │ ├── repository.py
 │ └── __init__.py
-└── Data
+└── Data/
   ├── image
   └── book
 
@@ -52,7 +52,7 @@ Project/
 ## Installation
 
 First clone the project and move in it :
-> git clone <github path>
+> git clone git@github.com:Riazzor/books_2_scrap.git
 
 ### Without virtual environment :
 > pip install -r requirements.txt
@@ -63,9 +63,9 @@ Multiple choice are available to handle your Virtual environment. My choice goes
 I will show you on virtualenv for now :
 > pip install virtualenv
 >
-> virtualenv venv
+> virtualenv venv # create a folder named venv containing your virtual environment
 
-You can name it venv or any other name.
+You can name it venv or any other name. Just make sure to replace it in the next command if you choose another name.
 
 On linux and mac :
 > source venv/bin/activate # to activate your environment
