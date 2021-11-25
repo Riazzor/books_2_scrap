@@ -3,5 +3,5 @@
 Data/*
 __pycache__
 *.pyc
-*.html
 Pipfile*
+venv
