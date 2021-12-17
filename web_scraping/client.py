@@ -9,13 +9,6 @@ BASEURL = "http://books.toscrape.com/"
 # TODO : test with requests.get
 
 
-def get_web_page(url: str) -> BeautifulSoup:
-    web_page = request("get", url).text
-    soup = BeautifulSoup(web_page, 'lxml')
-
-    return soup
-
-
 def get_book_cover(image_url):
     image = request('GET', image_url)
     content = False
@@ -24,16 +17,23 @@ def get_book_cover(image_url):
     return content
 
 
-class CategoryBookScraper:
+class BookScraper:
     def __init__(self, category_url) -> None:
         web_page = request('get', category_url).text
         self.url = category_url
         self.web_page = BeautifulSoup(web_page, 'lxml')
 
-    def get_category_books(self, url: str) -> list:
-        soup = self.get_web_page(url)
+    def get_web_page(self, url: str) -> BeautifulSoup:
+        web_page = request("get", url).text
+        soup = BeautifulSoup(web_page, 'lxml')
 
-        book_list = soup.find_all(name='article', class_='product_pod')
+        return soup
+
+    def get_category_books(self, category_url: str = None) -> list:
+        book_list = self.web_page.find_all(
+            name='article', class_='product_pod'
+        )
+        # print(book_list)
         category_books = []
         for book in book_list:
             book_url = book.find('a')['href']
@@ -46,10 +46,10 @@ class CategoryBookScraper:
             book_info = self.get_book_info(book_url)
             category_books.append(book_info)
 
-        next_page = soup.find('li', class_='next')
+        next_page = self.web_page.find('li', class_='next')
         if next_page:
             next_page_url = next_page.find('a')['href']
-            trunc_url = url[:url.rfind('/')] + '/'
+            trunc_url = category_url[:category_url.rfind('/')] + '/'
             next_page_url = trunc_url + next_page_url
             for book in self.get_category_books(next_page_url):
                 category_books.append(book)
@@ -57,7 +57,8 @@ class CategoryBookScraper:
         return category_books
 
     def get_book_info(self, book_url) -> dict:
-        book_data = self.web_page.find(name='table').find_all('tr')
+        book_page = self.get_web_page(book_url)
+        book_data = book_page.find(name='table').find_all('tr')
 
         # Number of book
         number_available = book_data[5].find('td').text
@@ -67,7 +68,7 @@ class CategoryBookScraper:
         ).group('nbr')
 
         # description
-        previous_div = self.web_page.find(name='div', id='product_description')
+        previous_div = book_page.find(name='div', id='product_description')
         if previous_div:
             product_description = previous_div.find_next_sibling('p').text
         else:
@@ -81,7 +82,7 @@ class CategoryBookScraper:
             'Four': 4,
             'Five': 5,
         }
-        pararagraphe = self.web_page.find(name='p', class_='star-rating')
+        pararagraphe = book_page.find(name='p', class_='star-rating')
         classes = pararagraphe.get('class')
         review_rating = rating.get(classes[-1], 'Not available')
 
@@ -96,7 +97,7 @@ class CategoryBookScraper:
         ).group('price')
 
         # image url
-        image_url = self.web_page.find('img').get('src')
+        image_url = book_page.find('img').get('src')
         # removing relative path
         image_url = '/'.join(
             elem for elem in image_url.split('/') if elem != '..'
@@ -104,7 +105,7 @@ class CategoryBookScraper:
         image_url = BASEURL + image_url
 
         # category
-        breadcrumb_active = self.web_page.find(
+        breadcrumb_active = book_page.find(
             'ul', class_='breadcrumb').find('li', class_='active')
         category = breadcrumb_active.find_previous_sibling('li').text.strip()
 
@@ -112,7 +113,7 @@ class CategoryBookScraper:
         book_info = {
             "product_page_url": book_url,
             "universal_product_code": book_data[0].find('td').text,
-            "title": self.web_page.h1.text,
+            "title": book_page.h1.text,
             "price_including_tax": price_including_tax,
             "price_excluding_tax": price_excluding_tax,
             "number_available": number_available,
@@ -126,10 +127,13 @@ class CategoryBookScraper:
 
 
 if __name__ == '__main__':
-    book_scrapper = CategoryBookScraper(
-        'http://books.toscrape.com/catalogue/the-requiem-red_995/index.html'
+    book_scrapper = BookScraper(
+        'http://books.toscrape.com/catalogue/category/books/travel_2/index.html'
     )
     book_info = book_scrapper.get_book_info(
         'http://books.toscrape.com/catalogue/the-requiem-red_995/index.html'
     )
     print(book_info)
+
+    # category_list = book_scrapper.get_category_books()
+    # print([book['title'] for book in category_list])
