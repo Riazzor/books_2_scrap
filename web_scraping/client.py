@@ -18,9 +18,9 @@ def get_book_cover(image_url):
 
 
 class BookScraper:
-    def __init__(self, category_url) -> None:
-        web_page = request('get', category_url).text
-        self.url = category_url
+    def __init__(self, url) -> None:
+        web_page = request('get', url).text
+        self.url = url
         self.web_page = BeautifulSoup(web_page, 'lxml')
 
     def get_web_page(self, url: str) -> BeautifulSoup:
@@ -29,7 +29,7 @@ class BookScraper:
 
         return soup
 
-    def get_category_books(self, category_url: str = None) -> list:
+    def get_category_books(self, category_url: str) -> list:
         book_list = self.web_page.find_all(
             name='article', class_='product_pod'
         )
@@ -125,15 +125,35 @@ class BookScraper:
 
         return book_info
 
+    def get_all_category(self) -> list:
+        all_categorys = self.web_page.find(
+            'ul', class_='nav-list'
+        ).find('ul').find_all('li')
+
+        category_list = []
+        for category in all_categorys:
+            current_category = {}
+            link = category.find('a')
+            category_name = link.text.strip().replace(' ', '_')
+            current_category['name'] = category_name
+            current_category['url'] = BASEURL + link.get('href')
+
+            category_list.append(current_category)
+
+        return category_list
+
 
 if __name__ == '__main__':
-    book_scrapper = BookScraper(
-        'http://books.toscrape.com/catalogue/category/books/travel_2/index.html'
+    book_scraper = BookScraper(
+        'http://books.toscrape.com/index.html'
     )
-    book_info = book_scrapper.get_book_info(
+    book_info = book_scraper.get_book_info(
         'http://books.toscrape.com/catalogue/the-requiem-red_995/index.html'
     )
     print(book_info)
 
-    # category_list = book_scrapper.get_category_books()
-    # print([book['title'] for book in category_list])
+    categorys = book_scraper.get_all_category()
+    print(*categorys, type(categorys), sep='\n\n')
+
+    # category_book = book_scraper.get_category_books()
+    # print([book['title'] for book in category_book])
