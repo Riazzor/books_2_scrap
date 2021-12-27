@@ -16,6 +16,9 @@ def get_book_cover(image_url):
         content = image.content
     return content
 
+# TODO : Get category list in __init__ ?
+# Is it used somewhere else ?
+
 
 class BookScraper:
     def __init__(self, url) -> None:
@@ -30,10 +33,11 @@ class BookScraper:
         return soup
 
     def get_category_books(self, category_url: str) -> list:
-        book_list = self.web_page.find_all(
+        web_page = self.get_web_page(category_url)
+        book_list = web_page.find_all(
             name='article', class_='product_pod'
         )
-        # print(book_list)
+
         category_books = []
         for book in book_list:
             book_url = book.find('a')['href']
@@ -46,8 +50,9 @@ class BookScraper:
             book_info = self.get_book_info(book_url)
             category_books.append(book_info)
 
-        next_page = self.web_page.find('li', class_='next')
+        next_page = web_page.find('li', class_='next')
         if next_page:
+
             next_page_url = next_page.find('a')['href']
             trunc_url = category_url[:category_url.rfind('/')] + '/'
             next_page_url = trunc_url + next_page_url
@@ -86,7 +91,7 @@ class BookScraper:
         classes = pararagraphe.get('class')
         review_rating = rating.get(classes[-1], 'Not available')
 
-        # Both price with and without taxe
+        # Both prices with and without taxe
         price_including_tax = re.search(
             r'(?P<price>\d+.\d+)',
             book_data[3].find('td').text
@@ -156,4 +161,3 @@ if __name__ == '__main__':
     print(*categorys, type(categorys), sep='\n\n')
 
     # category_book = book_scraper.get_category_books()
-    # print([book['title'] for book in category_book])

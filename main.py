@@ -1,20 +1,18 @@
 import os
 
 from infrastructure.repository import save_book, save_image
-from web_scraping.client import BASEURL, get_web_page
-from web_scraping.category_page import get_category_books
+from web_scraping.client import BASEURL, BookScraper
 
 # Function doesn't support categorie update with new books
-soup = get_web_page(BASEURL)
-category_list = soup.find('ul', class_='nav-list').find('ul').find_all('li')
+soup = BookScraper(BASEURL)
+category_list = soup.get_all_category()
 
 
 download_image = ''
 while download_image not in ('Oui', 'Non'):
-    download_image = 'Non'
     download_image = input(
         'Télécharger les images de couvertures ? Si non, le programme sera plus rapide [oui/NON]\n'
-    ).capitalize() or download_image
+    ).capitalize() or 'Non'
 
 image_path = {
     'Oui': save_image,
@@ -26,21 +24,21 @@ if not os.path.exists('./Data'):
     os.makedirs('./Data/book/')
     os.makedirs('./Data/image/')
 
+if download_image == 'Oui':
+    for category in category_list:
+        os.makedirs('./Data/image/%s/' % category['name'])
+
 for category in category_list:
-    link = category.find('a')
-    cat_url = BASEURL + link['href']
-    category_name = link.text.strip().replace(' ', '_')
-    category_books = get_category_books(cat_url)
-    if download_image == 'Oui':
-        os.makedirs(f'./Data/image/{category_name}/')
+    # import ipdb; ipdb.set_trace()
+    category_books = soup.get_category_books(category['url'])
     for book in category_books:
         # If the user's' choice is yes, download image and put image_path in book['image_path']
         # else keep image url
         image = image_path.get(download_image)(
             book['image_url'],
             book['universal_product_code'],
-            category_name
+            category['name']
         )
         if image:
             book['image_path'] = image
-        save_book(book, category_name)
+        save_book(book, category['name'])

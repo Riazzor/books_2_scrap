@@ -1,8 +1,7 @@
 import csv
 import os
 
-from web_scraping.book_page import get_book_info
-from web_scraping.client import get_book_cover
+from web_scraping.client import BASEURL, BookScraper, get_book_cover
 
 
 def save_image(image_url: str, image_name: str, category_name: str) -> str:
@@ -41,9 +40,12 @@ def save_book(book_info: dict, category: str = 'uncategorized') -> None:
 
 
 if __name__ == "__main__":
-    book_info = get_book_info(
+    scraper = BookScraper(BASEURL)
+    book_info = scraper.get_book_info(
         'http://books.toscrape.com/catalogue/the-requiem-red_995/index.html'
     )
+    os.makedirs('Data/book', exist_ok=True)
+    os.makedirs('Data/image/Young Adult', exist_ok=True)
     save_book(book_info)
     image_url = book_info['image_url']
     image_name = book_info['title']
